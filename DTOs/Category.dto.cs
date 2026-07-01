@@ -3,7 +3,7 @@ public class CreateCategoryDto
     public required string Name { get; set; }
     public string? Narration { get; set; } = string.Empty;
 };
-public class UpdatedCategoryDto
+public class UpdateCategoryDto
 {
     public string? Name { get; set; }
     public string? Narration { get; set; } = string.Empty;

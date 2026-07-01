@@ -4,63 +4,49 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/v1/category")]
 public class CategoryController : ControllerBase
 {
-    public readonly CategoryService _categoryService;
-    public CategoryController(CategoryService categoryService)
+    public readonly ICategoryService _categoryService;
+    public CategoryController(ICategoryService categoryService)
     {
         _categoryService = categoryService;
     }
-    private static List<Category> Categories = new List<Category>();
 
-    // Get: api/category => Get all category
+    // Get: api/category => Read all category
     [HttpGet]
-    public IActionResult GetCategories(string query = "")
+    public async Task<IActionResult> LoadCategories(string query = "")
     {
-        var categoryList = _categoryService.GetAllCategories();
-        return Ok(categoryList);
+        List<ResCategoryDto> response = await _categoryService.GetAllCategories();
+        return Ok(response);
     }
 
-    // Post: api/category => Post a new category
+    // Get: api/category/{categoryId} => Read a category
+    [HttpGet("{categoryId:guid}")]
+    public async Task<IActionResult> GetCategory(Guid categoryId)
+    {
+        ResCategoryDto? response = await _categoryService.GetCategoryById(categoryId);
+        return response == null ? Ok(response) : NotFound("Category not found!");
+    }
+
+    // Post: api/category => Create a new category
     [HttpPost]
-    public IActionResult CreateCategory(CreateCategoryDto CategoryData)
+    public async Task<IActionResult> CreateCategory(CreateCategoryDto categoryData)
     {
-        var newCategory = new Category
-        {
-            CategoryId = Guid.NewGuid(),
-            Name = CategoryData.Name,
-            Narration = CategoryData.Narration ?? "",
-            CreatedAt = DateTime.UtcNow
-        };
-        Categories.Add(newCategory);
-
-        return Created($"/api/category/{newCategory.CategoryId}", newCategory);
+        ResCategoryDto newCategory = await _categoryService.CreateCategory(categoryData);
+        return Created($"/api/v1/category/{newCategory.CategoryId}", newCategory);
     }
 
-    // Put: api/category => Post a new category
+    // Put: api/category/{categoryId} => Update a category
     [HttpPut("{categoryId:guid}")]
-    public IActionResult UpdateCategory(Guid categoryId, Category CategoryData)
+    public async Task<IActionResult> UpdateCategory(Guid categoryId, UpdateCategoryDto updateData)
     {
-        var OldCategory = Categories.FirstOrDefault(category => category.CategoryId == categoryId);
-        if (OldCategory == null)
-        {
-            return NotFound("Category are not found");
-        }
-        OldCategory.Name = CategoryData.Name;
-        OldCategory.Narration = CategoryData.Narration;
-        OldCategory.CreatedAt = DateTime.UtcNow;
-
-        return NoContent();
+        bool response = await _categoryService.UpdateCategory(categoryId, updateData);
+        return response ? NoContent() : NotFound("Category not found!");
     }
 
-    // Delete: api/category => Delete a new category
+    // Delete: api/category/{categoryId} => Delete a category
     [HttpDelete("{categoryId:guid}")]
-    public IActionResult DeleteCategory(Guid categoryId)
+    public async Task<IActionResult> DeleteCategory(Guid categoryId)
     {
-        var FoundCategory = Categories.FirstOrDefault(category => category.CategoryId == categoryId);
-        if (FoundCategory == null)
-        {
-            return NotFound("Category are not found");
-        }
-        Categories.Remove(FoundCategory);
-        return NoContent();
+        bool response = await _categoryService.DeleteCategory(categoryId);
+        return response ? NoContent() : NotFound("Category not found!");
     }
 }
