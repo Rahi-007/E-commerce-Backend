@@ -8,8 +8,26 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder
 builder.Services.AddAutoMapper(typeof(CategoryProfile));
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("NextJsPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        // .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
+
+// dotnet run seed
+if (args.Contains("seed"))
+{
+    await SeedRunner.RunAsync(app.Services);
+    return;
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -19,5 +37,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("NextJsPolicy");
 app.MapControllers();
+
 app.Run();
