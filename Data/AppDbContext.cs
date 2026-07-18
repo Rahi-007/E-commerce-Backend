@@ -10,16 +10,6 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.Team)
-            .WithMany(t => t.Members)
-            .HasForeignKey(u => u.TeamId);
-
-        modelBuilder.Entity<Team>()
-            .HasOne(t => t.TeamLeader)
-            .WithMany()
-            .HasForeignKey(t => t.TeamLeaderId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }
