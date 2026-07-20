@@ -21,6 +21,8 @@ public class AuthService : IAuthService
     {
         var user = await _appDbContext.Users
         .Include(x => x.Team)
+        .Include(x => x.CreatedBy)
+        .Include(x => x.UpdatedBy)
         .FirstOrDefaultAsync(x => x.Phone == userData.Phone);
 
         if (user is null)

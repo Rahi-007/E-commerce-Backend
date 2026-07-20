@@ -15,9 +15,9 @@ public class UserController : ControllerBase
 
     // Get: api/v1/user => Read all user
     [HttpGet]
-    public async Task<IActionResult> LoadUsers()
+    public async Task<IActionResult> LoadUsers(string? search)
     {
-        List<UserResDto> response = await _userService.GetAllUsers();
+        List<UserResDto> response = await _userService.GetAllUsers(search);
         return Ok(response);
     }
 

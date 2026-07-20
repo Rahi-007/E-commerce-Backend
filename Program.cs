@@ -10,7 +10,6 @@ builder.Services.AddApplicationServices();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
-builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -57,8 +56,16 @@ if (args.Contains("seed"))
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();                   // http://localhost:5111/openapi
-    app.MapScalarApiReference();        // http://localhost:5111/scalar/v1
+    app.MapOpenApi();                           // http://localhost:5111/openapi
+    app.MapScalarApiReference(options =>        // http://localhost:5111/scalar/v1
+    {
+        options
+            .AddPreferredSecuritySchemes("Bearer")
+            .AddHttpAuthentication("Bearer", auth =>
+            {
+                auth.Token = "";
+            });
+    });
 }
 
 app.UseHttpsRedirection();
