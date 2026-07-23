@@ -7,7 +7,14 @@ public class UserProfile : Profile
         CreateMap<CreateUserDto, User>();
 
         CreateMap<User, UserResDto>();
-
+        CreateMap<User, SelectUserRes>()
+        .ForMember(
+            d => d.Name,
+            o => o.MapFrom(s =>
+                s.LastName == null || s.LastName == ""
+                    ? s.FirstName
+                    : s.FirstName + " " + s.LastName)
+        );
         CreateMap<Team, UserResDto.TeamRes>();
 
         CreateMap<User, UserResDto.UserRes>()

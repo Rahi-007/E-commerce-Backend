@@ -5,4 +5,6 @@ public class Team : BaseEntity<int>
     public ICollection<User> Members { get; set; } = [];
     public Guid TeamLeaderId { get; set; }
     public User TeamLeader { get; set; } = null!;
+    public User CreatedBy { get; set; } = null!;
+    public User? UpdatedBy { get; set; }
 };

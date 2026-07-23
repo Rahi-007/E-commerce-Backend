@@ -75,7 +75,11 @@ namespace Ecommerce.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("TeamLeaderId");
+
+                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Teams");
                 });
@@ -141,13 +145,28 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Team", b =>
                 {
+                    b.HasOne("User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("User", "TeamLeader")
                         .WithMany()
                         .HasForeignKey("TeamLeaderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
                     b.Navigation("TeamLeader");
+
+                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("User", b =>

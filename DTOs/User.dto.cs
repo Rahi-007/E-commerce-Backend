@@ -6,7 +6,7 @@ public class CreateUserDto
     public string? Address { get; set; } = string.Empty;
     public DateOnly? DateOfBirth { get; set; }
     public Gender Gender { get; set; }
-    public int? Team { get; set; } = null;
+    public int? TeamId { get; set; } = null;
     public string? RFId { get; set; } = string.Empty;
     public required string Password { get; set; }
 };
@@ -20,7 +20,7 @@ public class UpdateUserDto
     public string? Address { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public Gender? Gender { get; set; }
-    public int? Team { get; set; }
+    public int? TeamId { get; set; }
     public string? RFId { get; set; }
 }
 
@@ -57,4 +57,11 @@ public class UserResDto
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
     }
+}
+
+public class SelectUserRes
+{
+    public Guid Id { get; set; }
+    public string Phone { get; set; } = null!;
+    public string Name { get; set; } = null!;
 }

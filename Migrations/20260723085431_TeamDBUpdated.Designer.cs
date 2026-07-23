@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260717104714_userCreate")]
-    partial class userCreate
+    [Migration("20260723085431_TeamDBUpdated")]
+    partial class TeamDBUpdated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,7 +78,11 @@ namespace Ecommerce.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("TeamLeaderId");
+
+                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Teams");
                 });
@@ -133,29 +137,63 @@ namespace Ecommerce.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("TeamId");
+
+                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Team", b =>
                 {
+                    b.HasOne("User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("User", "TeamLeader")
                         .WithMany()
                         .HasForeignKey("TeamLeaderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
                     b.Navigation("TeamLeader");
+
+                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("User", b =>
                 {
+                    b.HasOne("User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Team", "Team")
                         .WithMany("Members")
                         .HasForeignKey("TeamId");
 
+                    b.HasOne("User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
                     b.Navigation("Team");
+
+                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("Team", b =>
